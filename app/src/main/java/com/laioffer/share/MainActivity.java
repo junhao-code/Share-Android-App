@@ -1,5 +1,7 @@
 package com.laioffer.share;
 
+import android.support.v4.app.Fragment;
+import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,19 +14,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // Get ListView object from xml.
-//        ListView eventListView = (ListView) findViewById(R.id.event_list);
+        // Show different fragments based on screen size.
+        if (findViewById(R.id.fragment_container) != null) {
+            Fragment fragment = isTablet() ? new  CommentFragment() : new EventFragment();
+            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commit();
+        }
 
-        // Initialize an adapter.
-//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-//                this,
-//                R.layout.event_item,
-//                R.id.event_name,
-//                getEventNames());
-//        EventAdapter adapter = new EventAdapter(this);
-        // Assign adapter to ListView.
-//        eventListView.setAdapter(adapter);
+    }
 
+    private boolean isTablet() {
+        return (getApplicationContext().getResources().getConfiguration().screenLayout &
+                Configuration.SCREENLAYOUT_SIZE_MASK) >=
+                Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
     @Override

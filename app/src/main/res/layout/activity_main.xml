@@ -7,10 +7,10 @@
     android:orientation="horizontal"
     tools:context="com.laioffer.share.MainActivity">
 
-    <fragment android:name="com.laioffer.share.EventFragment"
-        android:id="@+id/event_fragment"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent">
-    </fragment>
+    <!--<fragment android:name="com.laioffer.share.EventFragment"-->
+        <!--android:id="@+id/event_fragment"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_width="match_parent">-->
+    <!--</fragment>-->
 </LinearLayout>
 
