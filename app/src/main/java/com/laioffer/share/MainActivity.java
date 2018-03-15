@@ -7,11 +7,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity implements EventFragment.OnItemSelectListener,CommentFragment.OnItemSelectListener {
     private EventFragment mListFragment;
     private CommentFragment mGridFragment;
+    private EditText mUsernameEditText;
+    private EditText mPasswordEditText;
+    private Button mSubmitButton;
+    private Button mRegisterButton;
+    private DatabaseReference mDatabase;
 
     @Override
     public void onCommentSelected(int position) {
@@ -34,15 +44,29 @@ public class MainActivity extends AppCompatActivity implements EventFragment.OnI
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //add list view
-        mListFragment = new EventFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.event_container, mListFragment).commit();
+        // Write a message to the database
+//        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        DatabaseReference myRef = database.getReference("message");
+//
+//        myRef.setValue("Hello, World!");
 
-        //add Gridview
-        if (isTablet()) {
-            mGridFragment = new CommentFragment();
-            getSupportFragmentManager().beginTransaction().add(R.id.comment_container, mGridFragment).commit();
-        }
+//        //add list view
+//        mListFragment = new EventFragment();
+//        getSupportFragmentManager().beginTransaction().add(R.id.event_container, mListFragment).commit();
+//
+//        //add Gridview
+//        if (isTablet()) {
+//            mGridFragment = new CommentFragment();
+//            getSupportFragmentManager().beginTransaction().add(R.id.comment_container, mGridFragment).commit();
+//        }
+
+        // Firebase uses singleton to initialize the sdk
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        mUsernameEditText = (EditText) findViewById(R.id.editTextLogin);
+        mPasswordEditText = (EditText) findViewById(R.id.editTextPassword);
+        mSubmitButton = (Button) findViewById(R.id.submit);
+        mRegisterButton = (Button) findViewById(R.id.register);
     }
 
     private boolean isTablet() {
