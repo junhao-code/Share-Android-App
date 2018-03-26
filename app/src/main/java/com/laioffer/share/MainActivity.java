@@ -109,6 +109,9 @@ public class MainActivity extends AppCompatActivity implements EventFragment.OnI
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.hasChild(username) && (password.equals(dataSnapshot.child(username).child("password").getValue()))) {
                             Log.i( " Your log", "You successfully login");
+                            Intent myIntent = new Intent(MainActivity.this, EventActivity.class);
+                            Utils.username = username;
+                            startActivity(myIntent);
                         } else {
                             Toast.makeText(getBaseContext(),"Please login again", Toast.LENGTH_SHORT).show();
                         }
