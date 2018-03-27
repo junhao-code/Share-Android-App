@@ -37,10 +37,26 @@ public class Event {
     public String getAddress() { return this.address; }
     public String getDescription() { return this.description; }
     public long getTime() { return this.time; }
+
+    public int getLike() {
+        return like;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getImgUri() {
+        return imgUri;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
-
     public void setAddress(String address) {
         this.address = address;
     }

@@ -36,8 +36,8 @@ public class Utils {
      * @return formatted string of time stamp
      */
     public static String timeTransformer(long millis) {
-        long currenttime = System.currentTimeMillis();
-        long diff = currenttime - millis;
+        long currentTime = System.currentTimeMillis();
+        long diff = currentTime - millis;
         long seconds = TimeUnit.MILLISECONDS.toSeconds(diff);
         long minutes = TimeUnit.MILLISECONDS.toMinutes(diff);
         long hours = TimeUnit.MILLISECONDS.toHours(diff);
@@ -74,7 +74,6 @@ public class Utils {
                 Log.e("Error: ", e.getMessage().toString());
             }
         }
-
         return bitmap;
     }
 }

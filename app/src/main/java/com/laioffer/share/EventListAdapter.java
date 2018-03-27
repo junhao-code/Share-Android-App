@@ -1,5 +1,7 @@
 package com.laioffer.share;
 
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,7 +60,25 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.View
         String[] locations = event.getAddress().split(",");
         holder.location.setText(locations[1] + "," + locations[2]);
         holder.description.setText(event.getDescription());
-        holder.time.setText(String.valueOf(event.getTime()));
+        holder.time.setText(Utils.timeTransformer(event.getTime()));
+
+        if (event.getImgUri() != null) {
+            final String url = event.getImgUri();
+            holder.imgview.setVisibility(View.VISIBLE);
+            new AsyncTask<Void, Void, Bitmap>(){
+                @Override
+                protected Bitmap doInBackground(Void... params) {
+                    return Utils.getBitmapFromURL(url);
+                }
+
+                @Override
+                protected void onPostExecute(Bitmap bitmap) {
+                    holder.imgview.setImageBitmap(bitmap);
+                }
+            }.execute();
+        } else {
+            holder.imgview.setVisibility(View.GONE);
+        }
     }
 
     /**
