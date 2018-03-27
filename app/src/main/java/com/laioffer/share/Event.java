@@ -36,7 +36,7 @@ public class Event {
     public String getTitle() { return this.title; }
     public String getAddress() { return this.address; }
     public String getDescription() { return this.description; }
-
+    public long getTime() { return this.time; }
     public void setTitle(String title) {
         this.title = title;
     }
