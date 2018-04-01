@@ -116,26 +116,33 @@ public class EventReportActivity extends AppCompatActivity {
 
         mLocationTracker = new LocationTracker(this);
         mLocationTracker.getLocation();
-        final double latitude = mLocationTracker.getLatitude();
-        final double longitude = mLocationTracker.getLongitude();
-
-        new AsyncTask<Void, Void, Void>() {
-            private List<String> mAddressList = new ArrayList<String>();
-
+        ImageView locationIcon = (ImageView) findViewById(R.id.img_event_location);
+        locationIcon.setOnClickListener(new View.OnClickListener() {
             @Override
-            protected Void doInBackground(Void... urls) {
-                mAddressList = mLocationTracker.getCurrentLocationViaJSON(latitude,longitude);
-                return null;
-            }
+            public void onClick(View view) {
+                final double latitude = mLocationTracker.getLatitude();
+                final double longitude = mLocationTracker.getLongitude();
 
-            @Override
-            protected void onPostExecute(Void input) {
-                if (mAddressList.size() >= 3) {
-                    mEditTextLocation.setText(mAddressList.get(0) + ", " + mAddressList.get(1) +
-                            ", " + mAddressList.get(2) + ", " + mAddressList.get(3));
-                }
+                // anonymous class format?
+                new AsyncTask<Void, Void, Void>() {
+                    private List<String> mAddressList = new ArrayList<String>();
+
+                    @Override
+                    protected Void doInBackground(Void... urls) {
+                        mAddressList = mLocationTracker.getCurrentLocationViaJSON(latitude,longitude);
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Void input) {
+                        if (mAddressList.size() >= 3) {
+                            mEditTextLocation.setText(mAddressList.get(0) + ", " + mAddressList.get(1) +
+                                    ", " + mAddressList.get(2) + ", " + mAddressList.get(3));
+                        }
+                    }
+                }.execute();
             }
-        }.execute();
+        });
 
     }
 
@@ -176,7 +183,9 @@ public class EventReportActivity extends AppCompatActivity {
             ex.printStackTrace();
         }
     }
-
+    /**
+     *  Upload event to database
+     * */
     private String uploadEvent() {
         String title = mEditTextTitle.getText().toString();
         String location = mEditTextLocation.getText().toString();
@@ -191,6 +200,8 @@ public class EventReportActivity extends AppCompatActivity {
         event.setAddress(location);
         event.setDescription(description);
         event.setTime(System.currentTimeMillis());
+        event.setLatitude(mLocationTracker.getLatitude());
+        event.setLongitude(mLocationTracker.getLongitude());
         event.setUsername(Utils.username);
         String key = database.child("events").push().getKey();
         event.setId(key);
@@ -214,7 +225,7 @@ public class EventReportActivity extends AppCompatActivity {
     }
 
     /**
-     * Upload image picked up from gallery to Firebase Cloud storage
+     * Upload image picked up from gallery to Firebase Cloud storage and create reference in database
      * @param eventId eventId
      */
     private void uploadImage(final String eventId) {

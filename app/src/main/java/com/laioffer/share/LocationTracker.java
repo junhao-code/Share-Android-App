@@ -129,6 +129,9 @@ public class LocationTracker  implements LocationListener {
         return longitude;
     }
 
+    /**
+     * Convert to JSON object
+     * */
     public static JSONObject getLocationInfo(double lat, double lng) {
         HttpGet httpGet = new HttpGet("http://maps.googleapis.com/maps/api/geocode/json?latlng="+ lat+","+lng +"&sensor=true");
         HttpClient client = new DefaultHttpClient();
@@ -158,7 +161,7 @@ public class LocationTracker  implements LocationListener {
     }
 
     /**
-     * After passting latitude and longitutude,we sent request to google location backend requesting
+     * After passing latitude and longitude, we sent request to google location backend requesting
      * for address, which returns as JSON format. We need to parse the returning JSON format and
      * transform to human readable format.
      * @param lat latitude
