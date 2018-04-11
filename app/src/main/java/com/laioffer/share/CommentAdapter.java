@@ -161,8 +161,9 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                             Event recordedevent = snapshot.getValue(Event.class);
                             if (recordedevent.getId().equals(event.getId())) {
                                 int number = recordedevent.getLike();
-                                holder.eventLikeNumber.setText(String.valueOf(number + 1));
-                                snapshot.getRef().child("like").setValue(number + 1);
+//                                holder.eventLikeNumber.setText(String.valueOf(number + 1));
+//                                snapshot.getRef().child("like").setValue(number + 1);
+                                setLike(snapshot, holder, number, event);
                                 break;
                             }
                         }
@@ -185,7 +186,45 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         commentHolder.commentTime.setText(Utils.timeTransformer(comment.getTime()));
     }
 
+    private void setLike(final DataSnapshot eventsSnapshot, final EventViewHolder holder,
+                         final int number, final Event event) {
+        databaseReference.child("likes").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // iterate over the "likes" table to check whether this user has liked this event
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Like like = snapshot.getValue(Like.class);
 
+                    if (like.getUserId().equals(Utils.username)
+                            && like.getEventId().equals(event.getId())) {
+                        snapshot.getRef().removeValue();
+                        holder.eventLikeNumber.setText(String.valueOf(number - 1));
+                        holder.eventImgViewGood.setImageResource(R.drawable.like);
+                        eventsSnapshot.getRef().child("like").setValue(number - 1);
+                        return;
+                    }
+                }
+                // if this user does not liked this event, increase the like number by one and
+                // insert a record into "likes" table to mark that this user has already liked
+                // this event
+                Like like = new Like();
+                like.setEventId(event.getId());
+                like.setUserId(Utils.username);
+                String key = databaseReference.child("likes").push().getKey();
+                like.setLikeId(key);
+                databaseReference.child("likes").child(key).setValue(like);
+                holder.eventLikeNumber.setText(String.valueOf(number + 1));
+                //TODO : create an image and replace with liked in drawable
+                holder.eventImgViewGood.setImageResource(R.drawable.liked);
+                eventsSnapshot.getRef().child("like").setValue(number + 1);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
     public void setEvent(final Event event) {
         this.event = event;
     }

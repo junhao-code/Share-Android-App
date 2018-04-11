@@ -19,7 +19,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * 在EventsFragment，要new 一个EventListAdapter，
+ * 我们多传进去一个set，在EventsFragment中new adapter之前，
+ * 去likes表中查一下，这个userid喜欢过的eventid，并把所有的eventid放set里。把set传进Adapter。
+ * 然后在adapter中的configView那个函数里，就可以check对应的event是否在set中，
+ * 如果在，就把holder.img_view设置成实心的图。
+ */
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,11 +37,11 @@ public class EventsFragment extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
     private DatabaseReference database;
     private List<Event> events;
+//    private EventListAdapter eventListAdapter;
 
     public EventsFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

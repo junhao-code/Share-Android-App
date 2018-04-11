@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +15,7 @@ import android.widget.TextView;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.VideoOptions;
 import com.google.android.gms.ads.formats.NativeAd;
-import com.google.android.gms.ads.formats.NativeAdOptions;
 import com.google.android.gms.ads.formats.NativeContentAd;
 import com.google.android.gms.ads.formats.NativeContentAdView;
 import com.google.firebase.database.DataSnapshot;
@@ -224,8 +221,9 @@ public class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                             Event recordedevent = snapshot.getValue(Event.class);
                             if (recordedevent.getId().equals(event.getId())) {
                                 int number = recordedevent.getLike();
-                                holder.good_number.setText(String.valueOf(number + 1));
-                                snapshot.getRef().child("like").setValue(number + 1);
+//                                holder.good_number.setText(String.valueOf(number + 1));
+//                                snapshot.getRef().child("like").setValue(number + 1);
+                                setLike(snapshot, holder, number, event);
                                 break;
                             }
                         }
@@ -316,6 +314,55 @@ public class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }).build();
 
         adLoader.loadAd(new AdRequest.Builder().build());
+    }
+
+
+    // When the user click on "Like" to add one "Like" for an event, first we should check whether
+// this user has "Liked" this event, and if so, the like number should be decreased by one, and
+// if not, the like number is increased by one.
+// How to check whether one user has liked one event??
+// We use another table called "likes" which has userId, eventId. We check this table to see
+// whether this user has liked this event, if so, decrease the like number by one and meanwhile
+// delete the record from the table; if not, increase the like number by one and insert a record
+// into the table
+    private void setLike(final DataSnapshot eventsSnapshot, final ViewHolder holder,
+                         final int number, final Event event) {
+        databaseReference.child("likes").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // iterate over the "likes" table to check whether this user has liked this event
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Like like = snapshot.getValue(Like.class);
+
+                    if (like.getUserId().equals(Utils.username)
+                            && like.getEventId().equals(event.getId())) {
+                        snapshot.getRef().removeValue();
+                        holder.good_number.setText(String.valueOf(number - 1));
+                        holder.img_view_good.setImageResource(R.drawable.like);
+                        eventsSnapshot.getRef().child("like").setValue(number - 1);
+                        return;
+                    }
+                }
+                // if this user does not liked this event, increase the like number by one and
+                // insert a record into "likes" table to mark that this user has already liked
+                // this event
+                Like like = new Like();
+                like.setEventId(event.getId());
+                like.setUserId(Utils.username);
+                String key = databaseReference.child("likes").push().getKey();
+                like.setLikeId(key);
+                databaseReference.child("likes").child(key).setValue(like);
+                holder.good_number.setText(String.valueOf(number + 1));
+                //TODO : create an image and replace with liked in drawable
+                holder.img_view_good.setImageResource(R.drawable.liked);
+                eventsSnapshot.getRef().child("like").setValue(number + 1);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
 }

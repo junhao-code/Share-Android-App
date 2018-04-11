@@ -74,20 +74,29 @@ public class CommentActivity extends AppCompatActivity {
                         child("commentNumber").setValue(comments.size());
                 commentAdapter.setComments(comments);
 
-
-                DataSnapshot eventSnapshot = dataSnapshot.child("events");
-                for (DataSnapshot noteDataSnapshot : eventSnapshot.getChildren()) {
-                    Event event = noteDataSnapshot.getValue(Event.class);
-                    if(event.getId().equals(eventId)) {
-                        commentAdapter.setEvent(event);
-                        break;
+                mDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        DataSnapshot eventSnapshot = dataSnapshot.child("events");
+                        for (DataSnapshot noteDataSnapshot : eventSnapshot.getChildren()) {
+                            Event event = noteDataSnapshot.getValue(Event.class);
+                            if (event.getId().equals(eventId)) {
+                                commentAdapter.setEvent(event);
+                                break;
+                            }
+                        }
+                        if (mRecyclerView.getAdapter() != null) {
+                            commentAdapter.notifyDataSetChanged();
+                        } else {
+                            mRecyclerView.setAdapter(commentAdapter);
+                        }
                     }
-                }
-                if (mRecyclerView.getAdapter() != null) {
-                    commentAdapter.notifyDataSetChanged();
-                } else {
-                    mRecyclerView.setAdapter(commentAdapter);
-                }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
             }
 
             @Override

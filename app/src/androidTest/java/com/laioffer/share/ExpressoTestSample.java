@@ -60,14 +60,17 @@ public class ExpressoTestSample {
     public void checkShowToast() {
         //Type username
         onView(withId(R.id.editTextLogin)).perform(ViewActions.clearText()).
-                perform(ViewActions.typeText("1111"));
+                perform(ViewActions.typeText("sjh"));
 
+        //Type password
+        onView(withId(R.id.editTextPassword)).perform(ViewActions.clearText()).
+                perform(ViewActions.typeText("123"));
 
         //Send intent and check intent
         onView(withId(R.id.submit)).perform(ViewActions.click());
 
         //Check text
-        onView(withId(R.id.Events)).check(matches(withText("Events")));
+        onView(withId(R.id.Events)).check(matches(withText("Login")));
     }
 
 }
